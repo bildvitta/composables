@@ -27,10 +27,7 @@ viewState.value.fetching // true | false
 </script>
 ```
 
-### Wrappers
-Composables wrappers é para **sempre** serem utilizados englobados por outros composables, **nunca** utilize esses composables diretamente nos seus componentes/composables/js.
-
-#### useCanWrapper
+### useCanWrapper
 Composable base para permissionamento de tela, wrappers são para **sempre** serem utilizados englobados por outros composables, **nunca** utilize esses composables diretamente nos seus componentes/composables/js.
 
 ```js
