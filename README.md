@@ -28,7 +28,7 @@ viewState.value.fetching // true | false
 ```
 
 ### useCanWrapper
-Composable base para permissionamento de tela, wrappers são para **sempre** serem utilizados englobados por outros composables, **nunca** utilize esses composables diretamente nos seus componentes/composables/js.
+Composable base para controle de permissões de tela. Os wrappers devem ser sempre utilizados como parte de outros composables, e não devem ser chamados diretamente nos seus componentes, composables ou JavaScript.
 
 ```js
 // composables/use-can.js
