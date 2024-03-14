@@ -15,7 +15,7 @@ export default defineConfig({
     },
 
     rollupOptions: {
-      external: ['vue'],
+      external: ['vue', 'vue-demi'],
 
       output: {
         globals: {

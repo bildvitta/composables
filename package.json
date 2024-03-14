@@ -1,6 +1,6 @@
 {
   "name": "@bildvitta/composables",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -29,7 +29,9 @@
     "vite-plugin-dts": "^3.7.3"
   },
   "dependencies": {
+    "@vue/compiler-sfc": "^3.4.21",
     "path": "^0.12.7",
-    "vue": "^3.4.21"
+    "vue": "^3.4.21",
+    "vue-demi": "^0.14.7"
   }
 }

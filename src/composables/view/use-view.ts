@@ -31,10 +31,10 @@ export function useView (config?: ViewParams) {
   const mode = config?.mode ?? ViewMode.Form
 
   const defaults = {
-    errors: {},
-    metadata: {},
-    values: {},
-    fields: {}
+    errors: config?.defaults?.errors,
+    metadata: config?.defaults?.metadata,
+    values: config?.defaults?.values,
+    fields: config?.defaults?.fields
   }
 
   const hasViewMode = Object.values(ViewMode).includes(mode as ViewMode)
