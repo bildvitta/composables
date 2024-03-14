@@ -84,7 +84,7 @@ export type UserStore = {
   /**
    * @example
    *
-   * ```js
+   * ```ts
    * {
    *  'companies.list': '*',
    *  'companies.show': '*',
@@ -96,6 +96,9 @@ export type UserStore = {
   userPermissions: Record<string, string>
   isSuperuser?: boolean
 }
+
+export type Can = (permission: string, entity: string) => boolean
+export type CanAny = (permissions: string[], entity: string) => boolean
 
 export type UseCanWrapperParam = {
   store: UserStore

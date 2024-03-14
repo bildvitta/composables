@@ -15,6 +15,9 @@ export type UserStore = {
   isSuperuser?: boolean
 }
 
+export type Can = (permission: string, entity: string) => boolean
+export type CanAny = (permissions: string[], entity: string) => boolean
+
 export type UseCanWrapperParam = {
   store: UserStore
 }
