@@ -22,7 +22,7 @@ export function useCanWrapper ({ store }: UseCanWrapperParam) {
   /**
    * @desc Função que valida apenas 1 permissão por vez.
    */
-  function can (permission: string, entity: string) {
+  function can (permission: string, entity?: string) {
     try {
       if (isSuperuser) return true
 
@@ -42,7 +42,7 @@ export function useCanWrapper ({ store }: UseCanWrapperParam) {
    * @desc Função que valida várias permissões de uma vez, se alguma das permissões
    * passadas existirem, retornará "true".
    */
-  function canAny (permissions: string[] = [], entity: string) {
+  function canAny (permissions: string[], entity?: string) {
     if (!Array.isArray(permissions)) {
       throw new Error('Please provide a valid array for permissions.')
     }
