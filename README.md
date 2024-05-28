@@ -104,3 +104,18 @@ export type UseCanWrapperParam = {
   store: UserStore
 }
 ```
+
+### useMediaPrint
+Composable para controlar quando está ou não no modo de impressão do navegador.
+Para personalizar a exibição do arquivo de impressão, é necessário utilizar o `@media print {}` em um arquivo de scss ou css.
+
+**Exemplos:**
+```js
+import { useMediaPrint } from '@bildvitta/composables'
+
+const { openMediaPrint, isMediaPrintActive } = useMediaPrint()
+
+isMediaPrintActive.value // true | false
+
+openMediaPrint() // Realiza o window.print()
+```
