@@ -1,114 +1,156 @@
 import {
   type UseAppCanWrapperParam,
-  type AppCanByPermissionParams,
-  type ConfigByPermissionParam,
-  type AppCanParams,
-  type ConfigParam
+  type CanByPermissionEntityConfig,
+  type CanByPermissionConfig,
+  type CanByPermissionWrapperFunction,
+  type AppCan,
+  type CanWrapperFunction
 } from './use-app-can-wrapper.type'
 
-/**
- * - canEdit
- * - canList
- * - canShow
- * - canCreate
- * - canDelete
- * - canByPermission
- */
-export default function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
-  function can (...params: AppCanParams) {
-    const normalizedParamPayload = _getNormalizedParamPayload(...params)
-  }
+import {
+  getNormalizedParams,
+  getNormalizedParamsByPermission,
+  getNormalizedParamsPayload
+} from './use-app-can-wrapper.util'
 
-  function canByPermission (...params: AppCanByPermissionParams) {
-    // parâmetros normalizados sempre serão um objeto
-    const normalizedParamPayload = _getNormalizedParamPayload(...params)
+export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
+  /**
+   * recupera todas permissões da empresa mãe atual e a empresa mãe atual
+   *
+   * @example currentMainCompany: 'company-uuid01'
+   * @example companyPermissions:
+   * {
+   *  'company-uuid01': ['companies.list', 'companies.show'],
+   *  'company-uuid02': ['companies.list', 'companies.show', 'companies.delete'],
+   *  'company-uuid03': ['companies.list', 'companies.show', 'companies.delete']
+   * }
+   */
+  const { companyPermissions, currentMainCompany } = store
 
-    // recupera todas permissões da empresa mãe atual e a empresa mãe atual
-    const { companyPermissions, currentMainCompany } = store
-
-    // recupera as permissões da empresa mãe atual
-    const mainCompanyPermissions = companyPermissions[currentMainCompany]
+  const can: AppCan = (entityConfig, config?) => {
+    const normalizedParamsPayload = getNormalizedParamsPayload(entityConfig, config)
+    console.log('TCL: can:AppCan -> normalizedParamsPayload?', normalizedParamsPayload)
 
     /**
-     * @example normalizedParamPayload
-     *
+     * @example normalizedParamsPayload:
      * {
-     *  users: { company: 'company1' },
-     *  settings: { company: ['company1', 'company2'], suffix: 'dashboard }
+     *  users: { action: 'list' },
+     *  settings: { action: 'dashboard' }
      * }
      */
-    for (const entity in normalizedParamPayload) {
-      const { company, suffix } = normalizedParamPayload[entity]
+    for (const entity in normalizedParamsPayload) {
+      console.log('TCL: can:AppCan -> entity', entity)
+      const { action } = normalizedParamsPayload[entity]
+      console.log('TCL: can:AppCan -> action', action)
+
+      for (const companyKey in companyPermissions) {
+        console.log('TCL: can:AppCan -> companyKey', companyKey)
+        /**
+         * @example permissionItem: ['companies.list', 'companies.show']
+         */
+        const permissionItem = companyPermissions[companyKey]
+        console.log('TCL: can:AppCan -> permissionItem', permissionItem)
+
+        if (permissionItem.includes(`${entity}.${action}`)) return true
+      }
+    }
+
+    return false
+  }
+
+  // wrappers do can
+  const canList: CanWrapperFunction = entity => {
+    const normalizedParams = getNormalizedParams('list', entity)
+    console.log('TCL: canList -> normalizedParams', normalizedParams)
+
+    return can(normalizedParams)
+  }
+
+  const canCreate: CanWrapperFunction = entity => {
+    const normalizedParams = getNormalizedParams('create', entity)
+
+    return can(normalizedParams)
+  }
+
+  function canByPermission (entityConfig: CanByPermissionEntityConfig, config?: CanByPermissionConfig) {
+    // parâmetros normalizados sempre serão um objeto
+    const normalizedParamsPayload = getNormalizedParamsPayload(entityConfig, config)
+
+    // recupera as permissões da empresa mãe atual
+    const mainCompanyPermissions = companyPermissions[currentMainCompany] || []
+    console.log('TCL: canByPermission -> mainCompanyPermissions', mainCompanyPermissions)
+
+    /**
+     * @example normalizedParamsPayload:
+     * {
+     *  users: { company: 'company1' },
+     *  settings: { company: ['company1', 'company2'], action: 'dashboard' }
+     * }
+     */
+    for (const entity in normalizedParamsPayload) {
+      const { company, action } = normalizedParamsPayload[entity]
 
       // se a empresa for uma string, normaliza para um array
       const normalizedCompany = Array.isArray(company) ? company : [company]
 
       /**
-       * @example normalizedCompany
-       *
-       * ['company1', 'company2']
+       * @example normalizedCompany: ['company1', 'company2']
        */
       for (const companyItem of normalizedCompany) {
+        const companyPermission = companyPermissions[companyItem] || []
+
         // mergeia as permissões da empresa mãe atual com as permissões da empresa atual
         const permissionItem = [
           ...mainCompanyPermissions,
-          ...companyPermissions[companyItem]
+          ...companyPermission
         ]
 
-        if (permissionItem.includes(`${entity}.${suffix}`)) return true
+        console.log('TCL: canByPermission -> permissionItem', { permissionItem, if: `${entity}.${action}` })
+        if (permissionItem.includes(`${entity}.${action}`)) return true
       }
     }
 
-    return true
+    return false
   }
 
-  function canEdit (...params: AppCanByPermissionParams) {
-    return _withSuffix('edit', canByPermission)(...params)
+  // wrappers do canByPermission
+  const canEdit: CanByPermissionWrapperFunction = (entityConfig, config?) => {
+    const normalizedParamsPayload = getNormalizedParamsByPermission('edit', entityConfig, config)
+
+    return canByPermission(normalizedParamsPayload)
   }
 
-  function canDelete (...params: AppCanByPermissionParams) {
-    return _withSuffix('delete', canByPermission)(...params)
+  const canDelete: CanByPermissionWrapperFunction = (entityConfig, config?) => {
+    const normalizedParamsPayload = getNormalizedParamsByPermission('delete', entityConfig, config)
+
+    return canByPermission(normalizedParamsPayload)
   }
 
-  function canShow (...params: AppCanByPermissionParams) {
-    return _withSuffix('show', canByPermission)(...params)
-  }
+  const canShow: CanByPermissionWrapperFunction = (entityConfig, config?) => {
+    const normalizedParamsPayload = getNormalizedParamsByPermission('show', entityConfig, config)
 
-  // private functions
-  function _getNormalizedParamPayload<T> (...params: T extends AppCanByPermissionParams ? AppCanByPermissionParams : AppCanParams) {
-  // function _getNormalizedParamPayload<T> (...params: T extends AppCanByPermissionParams ? AppCanByPermissionParams : AppCanParams) {
-    const [entityOrObjectConfig, config] = params
-
-    const normalizedParamPayload: Record<string, T extends AppCanByPermissionParams ? ConfigByPermissionParam : ConfigParam> = {}
-
-    /**
-     * Se o primeiro parâmetro for uma string, sempre normaliza para um objeto
-     */
-    if (typeof entityOrObjectConfig === 'string' && config) {
-      normalizedParamPayload[entityOrObjectConfig] = config
-    }
-
-    return normalizedParamPayload
-  }
-
-  // Função de ordem superior para injetar o suffix
-  function _withSuffix (suffix: string, fn: (...params: AppCanByPermissionParams) => boolean) {
-    return (...params: AppCanByPermissionParams) => {
-      const normalizedParamPayload = _getNormalizedParamPayload<AppCanByPermissionParams>(...params)
-
-      for (const entity in normalizedParamPayload) {
-        normalizedParamPayload[entity].suffix = suffix
-      }
-
-      return fn(normalizedParamPayload)
-    }
+    return canByPermission(normalizedParamsPayload)
   }
 
   return {
     can,
+    canList,
+    canCreate,
+
     canByPermission,
     canEdit,
     canDelete,
     canShow
   }
 }
+
+// const { can, canByPermission, canList } = useAppCanWrapper()
+
+// can('users', { action: 'list' })
+// can({ users: { action: 'list' } })
+
+// canByPermission('users', { company: 'company1', action: 'list' })
+// canByPermission({ users: { company: 'company1', action: 'list' } })
+
+// canList('users')
+// canList(['users'])

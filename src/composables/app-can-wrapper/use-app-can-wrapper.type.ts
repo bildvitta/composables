@@ -4,21 +4,40 @@ export type UseAppCanWrapperParam = {
   store: Required<Pick<UserStore, 'isSuperuser' | 'companyPermissions' | 'currentMainCompany' | 'mainCompanyOptions'>>
 }
 
-export type ConfigByPermissionParam = {
+export type CanConfig = {
+  action: string
+}
+
+export type CanObjectOfConfig = Record<string, CanConfig>
+export type CanEntityConfig = string | CanObjectOfConfig
+
+export type AppCan = (entityConfig: CanEntityConfig, config?: CanConfig) => boolean
+export type CanList = (entity: string | string[]) => boolean
+
+// ByPermission
+export type CanByPermissionConfig = {
   company: string | string[]
-  suffix?: string
+  action: string
 }
 
-export type ConfigParam = {
-  suffix?: string
-}
+export type CanByPermissionEditConfig = Pick<CanByPermissionConfig, 'company'>
+export type CanByPermissionObjectOfConfig = Record<string, CanByPermissionConfig>
+export type CanByPermissionEntityConfig = string | CanByPermissionObjectOfConfig
 
-export type ItemParam = (entity: string, config: object) => boolean
+export type CanByPermissionObjectOfEditConfig = Record<string, CanByPermissionEditConfig>
+export type CanByPermissionEntityEditConfig = string | CanByPermissionObjectOfEditConfig
 
-export type ParamsByPermissionFirstOption = [string, ConfigByPermissionParam?]
-export type ParamsByPermissionSecond = [Record<string, ConfigByPermissionParam>?]
-export type AppCanByPermissionParams = ParamsByPermissionFirstOption | ParamsByPermissionSecond
+// utils
+export type CanByPermissionWrapperFunction = (
+  entityConfig: CanByPermissionEntityEditConfig,
+  config?: CanByPermissionEditConfig
+) => boolean
 
-export type ParamsFirstOption = [string, ConfigParam]
-export type ParamsSecond = [Record<string, ConfigParam>]
-export type AppCanParams = ParamsFirstOption | ParamsSecond
+export type GetNormalizedParamsByPermission = (
+  action: string,
+  entityConfig: CanByPermissionEntityEditConfig,
+  config?: CanByPermissionEditConfig
+) => CanByPermissionObjectOfConfig
+
+export type GetNormalizedParams = (action: string, entity: string | string[]) => CanObjectOfConfig
+export type CanWrapperFunction = (entity: string | string[]) => boolean
