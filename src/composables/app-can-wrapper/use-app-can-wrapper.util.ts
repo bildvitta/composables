@@ -6,7 +6,6 @@ import {
 } from './use-app-can-wrapper.type'
 
 export const getNormalizedParams: GetNormalizedParams = (action, entity) => {
-  console.log('TCL: getNormalizedParams:GetNormalizedParams -> action, entity', action, entity)
   const normalizedParam = Array.isArray(entity) ? entity : [entity]
   const normalizedParamsPayload: CanObjectOfConfig = {}
 
@@ -18,7 +17,6 @@ export const getNormalizedParams: GetNormalizedParams = (action, entity) => {
 }
 
 export const getNormalizedParamsPayload = <T, U>(entityConfig: T, config?: U) => {
-  console.log('TCL: getNormalizedParamsPayload -> entityConfig: T, config?: U', entityConfig, config)
   const normalizedParamsPayload: Record<string, U> = {}
   const isStringEntityConfig = typeof entityConfig === 'string'
 

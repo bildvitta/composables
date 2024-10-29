@@ -1,10 +1,10 @@
 import {
-  type UseAppCanWrapperParam,
-  type CanByPermissionEntityConfig,
-  type CanByPermissionConfig,
-  type CanByPermissionWrapperFunction,
   type AppCan,
-  type CanWrapperFunction
+  type CanByPermissionConfig,
+  type CanByPermissionEntityConfig,
+  type CanByPermissionWrapperFunction,
+  type CanWrapperFunction,
+  type UseAppCanWrapperParam
 } from './use-app-can-wrapper.type'
 
 import {
@@ -13,23 +13,56 @@ import {
   getNormalizedParamsPayload
 } from './use-app-can-wrapper.util'
 
+/**
+ * @desc Novo sistema de permissionamento baseado em empresas.
+ *
+ * @example
+ * ```js
+ * const{
+ *  can,
+ *  canList,
+ *  canCreate,
+ *  canByPermission,
+ *  canEdit,
+ *  canDelete,
+ *  canShow
+ * } = useAppCanWrapper({ store })
+ *
+ * can('users', { action: 'dashboard' })
+ * can({ users: { action: 'dashboard' } })
+ *
+ * canList('users')
+ * canList(['users', 'approvals'])
+ *
+ * canCreate('users')
+ * canCreate(['users', 'approvals'])
+ *
+ * canByPermission('users', { company: 'company1', action: 'dashboard' })
+ * canByPermission({ users: { company: ['company1', ''company2'], action: 'dashboard' } })
+ *
+ * canEdit('users', { company: ['company1', ''company2'] })
+ * canEdit({ users: { company: 'company1' } })
+ *
+ * canDelete('users', { company: 'company1' })
+ * canDelete({ users: { company: ['company1', ''company2'] } })
+ *
+ * canShow('users', { company: 'company1' })
+ * canShow({ users: { company: ['company1', ''company2'] } })
+ * ```
+ */
 export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
-  /**
-   * recupera todas permissões da empresa mãe atual e a empresa mãe atual
-   *
-   * @example currentMainCompany: 'company-uuid01'
-   * @example companyPermissions:
-   * {
-   *  'company-uuid01': ['companies.list', 'companies.show'],
-   *  'company-uuid02': ['companies.list', 'companies.show', 'companies.delete'],
-   *  'company-uuid03': ['companies.list', 'companies.show', 'companies.delete']
-   * }
-   */
-  const { companyPermissions, currentMainCompany } = store
+  const { companyPermissions, currentMainCompany, isSuperuser } = store
 
+  /**
+   * @desc função para verificar se o usuário tem permissão sem levar em consideração a empresa
+   * especifica, por exemplo, se o usuário tem permissão para listar usuários em alguma empresa
+   * então ele pode listar usuários em qualquer empresa.
+   *
+   */
   const can: AppCan = (entityConfig, config?) => {
+    if (isSuperuser) return true
+
     const normalizedParamsPayload = getNormalizedParamsPayload(entityConfig, config)
-    console.log('TCL: can:AppCan -> normalizedParamsPayload?', normalizedParamsPayload)
 
     /**
      * @example normalizedParamsPayload:
@@ -39,17 +72,13 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
      * }
      */
     for (const entity in normalizedParamsPayload) {
-      console.log('TCL: can:AppCan -> entity', entity)
       const { action } = normalizedParamsPayload[entity]
-      console.log('TCL: can:AppCan -> action', action)
 
       for (const companyKey in companyPermissions) {
-        console.log('TCL: can:AppCan -> companyKey', companyKey)
         /**
          * @example permissionItem: ['companies.list', 'companies.show']
          */
         const permissionItem = companyPermissions[companyKey]
-        console.log('TCL: can:AppCan -> permissionItem', permissionItem)
 
         if (permissionItem.includes(`${entity}.${action}`)) return true
       }
@@ -61,7 +90,6 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
   // wrappers do can
   const canList: CanWrapperFunction = entity => {
     const normalizedParams = getNormalizedParams('list', entity)
-    console.log('TCL: canList -> normalizedParams', normalizedParams)
 
     return can(normalizedParams)
   }
@@ -72,13 +100,21 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
     return can(normalizedParams)
   }
 
+  /**
+   * @desc função para verificar se o usuário tem permissão levando em consideração a empresa.
+   * Se o usuário tem permissão para listar usuários em uma empresa mãe, então ele pode listar
+   * usuários em qualquer empresa filha, empresas filhas podem ter permissões diferentes e especificas,
+   * por exemplo, a empresa mãe pode ter permissão para listar usuários, mas a empresa filha pode ter
+   * permissão para deletar usuários, só naquela empresa especifica ele poderá deletar usuários.
+   */
   function canByPermission (entityConfig: CanByPermissionEntityConfig, config?: CanByPermissionConfig) {
+    if (isSuperuser) return true
+
     // parâmetros normalizados sempre serão um objeto
     const normalizedParamsPayload = getNormalizedParamsPayload(entityConfig, config)
 
     // recupera as permissões da empresa mãe atual
     const mainCompanyPermissions = companyPermissions[currentMainCompany] || []
-    console.log('TCL: canByPermission -> mainCompanyPermissions', mainCompanyPermissions)
 
     /**
      * @example normalizedParamsPayload:
@@ -99,13 +135,16 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
       for (const companyItem of normalizedCompany) {
         const companyPermission = companyPermissions[companyItem] || []
 
-        // mergeia as permissões da empresa mãe atual com as permissões da empresa atual
+        /**
+         * mergeia as permissões da empresa mãe atual com as permissões da empresa atual
+         *
+         * @example permissionItem: ['companies.list', 'companies.show']
+         */
         const permissionItem = [
           ...mainCompanyPermissions,
           ...companyPermission
         ]
 
-        console.log('TCL: canByPermission -> permissionItem', { permissionItem, if: `${entity}.${action}` })
         if (permissionItem.includes(`${entity}.${action}`)) return true
       }
     }
@@ -137,20 +176,10 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
     canList,
     canCreate,
 
+    // by permission
     canByPermission,
     canEdit,
     canDelete,
     canShow
   }
 }
-
-// const { can, canByPermission, canList } = useAppCanWrapper()
-
-// can('users', { action: 'list' })
-// can({ users: { action: 'list' } })
-
-// canByPermission('users', { company: 'company1', action: 'list' })
-// canByPermission({ users: { company: 'company1', action: 'list' } })
-
-// canList('users')
-// canList(['users'])
