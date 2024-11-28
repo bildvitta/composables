@@ -26,12 +26,15 @@
     "eslint-plugin-promise": "^6.1.1",
     "typescript": "^5.4.2",
     "vite": "^5.1.6",
-    "vite-plugin-dts": "^3.7.3"
+    "vite-plugin-dts": "^3.7.3",
+    "vue": "^3.0.0"
   },
   "dependencies": {
     "@vue/compiler-sfc": "^3.4.21",
     "path": "^0.12.7",
-    "vue": "^3.4.21",
     "vue-demi": "^0.14.7"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
   }
 }
