@@ -1,7 +1,9 @@
 import { type UserStore } from '../../types'
 
+export type AppCanStoreOptions = 'isSuperuser' | 'companyPermissions' | 'currentMainCompany' | 'mainCompanyOptions'
+
 export type UseAppCanWrapperParam = {
-  store: Required<Pick<UserStore, 'isSuperuser' | 'companyPermissions' | 'currentMainCompany' | 'mainCompanyOptions'>>
+  store: Required<Pick<UserStore, AppCanStoreOptions>>
 }
 
 export type CanConfig = {
@@ -15,6 +17,8 @@ export type AppCan = (entityConfig: CanEntityConfig, config?: CanConfig) => bool
 export type CanList = (entity: string | string[]) => boolean
 
 // ByPermission
+export type CanByPermission = (entityConfig: CanByPermissionEntityConfig, config?: CanByPermissionConfig) => boolean
+
 export type CanByPermissionConfig = {
   company: string | string[]
   action: string

@@ -1,7 +1,6 @@
 import {
   type AppCan,
-  type CanByPermissionConfig,
-  type CanByPermissionEntityConfig,
+  type CanByPermission,
   type CanByPermissionWrapperFunction,
   type CanWrapperFunction,
   type UseAppCanWrapperParam
@@ -38,16 +37,16 @@ import {
  * canCreate(['users', 'approvals'])
  *
  * canByPermission('users', { company: 'company1', action: 'dashboard' })
- * canByPermission({ users: { company: ['company1', ''company2'], action: 'dashboard' } })
+ * canByPermission({ users: { company: ['company1', 'company2'], action: 'dashboard' } })
  *
- * canEdit('users', { company: ['company1', ''company2'] })
+ * canEdit('users', { company: ['company1', 'company2'] })
  * canEdit({ users: { company: 'company1' } })
  *
  * canDelete('users', { company: 'company1' })
- * canDelete({ users: { company: ['company1', ''company2'] } })
+ * canDelete({ users: { company: ['company1', 'company2'] } })
  *
  * canShow('users', { company: 'company1' })
- * canShow({ users: { company: ['company1', ''company2'] } })
+ * canShow({ users: { company: ['company1', 'company2'] } })
  * ```
  */
 export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
@@ -57,7 +56,6 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
    * @desc função para verificar se o usuário tem permissão sem levar em consideração a empresa
    * especifica, por exemplo, se o usuário tem permissão para listar usuários em alguma empresa
    * então ele pode listar usuários em qualquer empresa.
-   *
    */
   const can: AppCan = (entityConfig, config?) => {
     if (isSuperuser) return true
@@ -107,7 +105,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
    * por exemplo, a empresa mãe pode ter permissão para listar usuários, mas a empresa filha pode ter
    * permissão para deletar usuários, só naquela empresa especifica ele poderá deletar usuários.
    */
-  function canByPermission (entityConfig: CanByPermissionEntityConfig, config?: CanByPermissionConfig) {
+  const canByPermission: CanByPermission = (entityConfig, config) => {
     if (isSuperuser) return true
 
     // parâmetros normalizados sempre serão um objeto

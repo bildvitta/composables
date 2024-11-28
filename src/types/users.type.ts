@@ -16,7 +16,7 @@ export type UserStore = {
    * }
    * ```
    */
-  userPermissions: Record<string, string>
+  userPermissions?: Record<string, string>
 
   /**
    * @desc Permissões por empresa.
