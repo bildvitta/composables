@@ -13,6 +13,12 @@ import {
 } from './use-app-can-wrapper.util'
 
 /**
+ * @typedef {Object} Utilities
+ * @property {Function} can - A primeira função.
+ * @property {Function} func2 - A segunda função.
+ */
+
+/**
  * @desc Novo sistema de permissionamento baseado em empresas.
  *
  * @example
@@ -48,6 +54,8 @@ import {
  * canShow('users', { company: 'company1' })
  * canShow({ users: { company: ['company1', 'company2'] } })
  * ```
+ *
+ * @returns {Utilities} Um objeto com funções utilitárias.
  */
 export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
   const { companyPermissions, currentMainCompany, isSuperuser } = store
@@ -99,6 +107,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
   }
 
   /**
+   * @type {CanByPermission}
    * @desc função para verificar se o usuário tem permissão levando em consideração a empresa.
    * Se o usuário tem permissão para listar usuários em uma empresa mãe, então ele pode listar
    * usuários em qualquer empresa filha, empresas filhas podem ter permissões diferentes e especificas,
@@ -170,6 +179,9 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
   }
 
   return {
+    /**
+     * @type {can}
+     */
     can,
     canList,
     canCreate,
