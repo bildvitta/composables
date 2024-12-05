@@ -6,6 +6,7 @@ O formato é baseado em Keep a Changelog, e este projeto adere ao Semantic Versi
 ### Adicionado
 - `useView`: adicionado nova função `reset` para resetar todos valores do view.
 - `useAppCanWrapper`: adicionado novo wrapper de permissionamento.
+- Adicionado teste unitário "vitest" ao projeto e adicionado testes no useAppCanWrapper.
 
 ### Modificado
 - Modificado "vue" como "devDependencies".

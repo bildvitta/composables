@@ -2,8 +2,10 @@ import { type UserStore } from '../../types'
 
 export type AppCanStoreOptions = 'isSuperuser' | 'companyPermissions' | 'currentMainCompany' | 'mainCompanyOptions'
 
+export type AppCanWrapperStore = Required<Pick<UserStore, AppCanStoreOptions>>
+
 export type UseAppCanWrapperParam = {
-  store: Required<Pick<UserStore, AppCanStoreOptions>>
+  store: AppCanWrapperStore
 }
 
 export type CanConfig = {

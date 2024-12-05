@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "publishConfig": {
     "access": "public",
@@ -27,6 +28,7 @@
     "typescript": "^5.4.2",
     "vite": "^5.1.6",
     "vite-plugin-dts": "^3.7.3",
+    "vitest": "^2.1.8",
     "vue": "^3.0.0"
   },
   "dependencies": {

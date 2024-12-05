@@ -140,6 +140,8 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
        * @example normalizedCompany: ['company1', 'company2']
        */
       for (const companyItem of normalizedCompany) {
+        if (!companyPermissions[companyItem]) continue
+
         const companyPermission = companyPermissions[companyItem] || []
 
         /**
