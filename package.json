@@ -1,11 +1,12 @@
 {
   "name": "@bildvitta/composables",
-  "version": "1.0.0-beta.7",
+  "version": "1.0.0-beta.8",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "publishConfig": {
     "access": "public",
@@ -26,12 +27,16 @@
     "eslint-plugin-promise": "^6.1.1",
     "typescript": "^5.4.2",
     "vite": "^5.1.6",
-    "vite-plugin-dts": "^3.7.3"
+    "vite-plugin-dts": "^3.7.3",
+    "vitest": "^2.1.8",
+    "vue": "^3.0.0"
   },
   "dependencies": {
     "@vue/compiler-sfc": "^3.4.21",
     "path": "^0.12.7",
-    "vue": "^3.4.21",
     "vue-demi": "^0.14.7"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
   }
 }

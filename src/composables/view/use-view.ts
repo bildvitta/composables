@@ -21,9 +21,13 @@ enum ViewMode {
  * />
  *
  * <script setup>
- * const { viewState } = useView({ mode: 'list' })
+ * const { viewState, reset } = useView({ mode: 'list' })
  *
  * viewState.value.fetching // true | false
+ *
+ * reset() // reseta o estado da view para os valores padrões (default)
+ *
+ * reset(false) // reseta o estado da view para os valores não padrões (não default)
  * </script>
  * ```
  */
@@ -53,7 +57,28 @@ export function useView (config?: ViewParams) {
     ...(mode === ViewMode.Form && { values: { ...defaults?.values }, submitting: false })
   })
 
+  /**
+   * Reseta os valores do estado da view.
+   */
+  const reset = (toDefaults: boolean = true) => {
+    viewState.value.fetching = false
+
+    viewState.value.errors = toDefaults ? { ...defaults?.errors } : {}
+    viewState.value.fields = toDefaults ? { ...defaults?.fields } : {}
+    viewState.value.metadata = toDefaults ? { ...defaults?.metadata } : {}
+
+    if (mode === ViewMode.Form) {
+      viewState.value.values = toDefaults ? { ...defaults?.values } : {}
+      viewState.value.submitting = false
+    }
+
+    if (mode === ViewMode.List) (viewState.value.results = [])
+
+    if (mode === ViewMode.Single) (viewState.value.result = {})
+  }
+
   return {
-    viewState
+    viewState,
+    reset
   }
 }
