@@ -181,9 +181,6 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
   }
 
   return {
-    /**
-     * @type {can}
-     */
     can,
     canList,
     canCreate,
