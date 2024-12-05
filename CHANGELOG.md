@@ -2,7 +2,7 @@
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em Keep a Changelog, e este projeto adere ao Semantic Versioning.
 
-## Não publicado - 30-10-2024
+## 1.0.0-beta.9 - 05-12-2024
 ### Adicionado
 - `useView`: adicionado nova função `reset` para resetar todos valores do view.
 - `useAppCanWrapper`: adicionado novo wrapper de permissionamento.
