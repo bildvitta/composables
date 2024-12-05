@@ -12,17 +12,19 @@ export type CanConfig = {
   action: string
 }
 
+export type StringOrStringList = string | string[]
+
 export type CanObjectOfConfig = Record<string, CanConfig>
 export type CanEntityConfig = string | CanObjectOfConfig
 
 export type AppCan = (entityConfig: CanEntityConfig, config?: CanConfig) => boolean
-export type CanList = (entity: string | string[]) => boolean
+export type CanList = (entity: StringOrStringList) => boolean
 
 // ByPermission
 export type CanByPermission = (entityConfig: CanByPermissionEntityConfig, config?: CanByPermissionConfig) => boolean
 
 export type CanByPermissionConfig = {
-  company: string | string[]
+  company: StringOrStringList
   action: string
 }
 
@@ -45,5 +47,5 @@ export type GetNormalizedParamsByPermission = (
   config?: CanByPermissionEditConfig
 ) => CanByPermissionObjectOfConfig
 
-export type GetNormalizedParams = (action: string, entity: string | string[]) => CanObjectOfConfig
-export type CanWrapperFunction = (entity: string | string[]) => boolean
+export type GetNormalizedParams = (action: string, entity: StringOrStringList) => CanObjectOfConfig
+export type CanWrapperFunction = (entity: StringOrStringList) => boolean

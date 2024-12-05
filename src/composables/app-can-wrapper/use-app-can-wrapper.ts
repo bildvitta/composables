@@ -132,9 +132,9 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
        * @example normalizedCompany: ['company1', 'company2']
        */
       for (const companyItem of normalizedCompany) {
-        if (!companyPermissions[companyItem]) continue
+        const companyPermission = companyPermissions[companyItem]
 
-        const companyPermission = companyPermissions[companyItem] || []
+        if (!companyPermission) continue
 
         /**
          * mergeia as permissões da empresa mãe atual com as permissões da empresa atual
@@ -143,7 +143,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
          */
         const permissionItem = [
           ...mainCompanyPermissions,
-          ...companyPermission
+          ...(companyPermission || [])
         ]
 
         if (permissionItem.includes(`${entity}.${action}`)) return true
