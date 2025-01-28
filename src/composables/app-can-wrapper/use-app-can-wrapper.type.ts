@@ -4,12 +4,14 @@ export type AppCanStoreOptions = 'isSuperuser' | 'companyPermissions' | 'current
 
 export type AppCanWrapperStore = Required<Pick<UserStore, AppCanStoreOptions>>
 
+export type ActionType = string | string[]
+
 export type UseAppCanWrapperParam = {
   store: AppCanWrapperStore
 }
 
 export type CanConfig = {
-  action: string
+  action: ActionType
 }
 
 export type StringOrStringList = string | string[]
@@ -25,7 +27,7 @@ export type CanByPermission = (entityConfig: CanByPermissionEntityConfig, config
 
 export type CanByPermissionConfig = {
   company: StringOrStringList
-  action: string
+  action: ActionType
 }
 
 export type CanByPermissionEditConfig = Pick<CanByPermissionConfig, 'company'>
@@ -42,10 +44,10 @@ export type CanByPermissionWrapperFunction = (
 ) => boolean
 
 export type GetNormalizedParamsByPermission = (
-  action: string,
+  action: ActionType,
   entityConfig: CanByPermissionEntityEditConfig,
   config?: CanByPermissionEditConfig
 ) => CanByPermissionObjectOfConfig
 
-export type GetNormalizedParams = (action: string, entity: StringOrStringList) => CanObjectOfConfig
+export type GetNormalizedParams = (action: ActionType, entity: StringOrStringList) => CanObjectOfConfig
 export type CanWrapperFunction = (entity: StringOrStringList) => boolean

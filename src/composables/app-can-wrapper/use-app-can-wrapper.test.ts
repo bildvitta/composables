@@ -61,8 +61,12 @@ describe.each(storeList)('Permissionamento -> isSuperuser: $isSuperuser', (store
     expect(can('settings', { action: 'dashboard' })).toBe(isSuperuser)
     expect(can('settings', { action: '' })).toBe(isSuperuser)
     expect(can('settings', { action: 'create' })).toBe(true)
+    expect(can('users', { action: ['list', 'waitingCompanyLinks', 'approvals'] })).toBe(true)
+    expect(can('settings', { action: ['list', 'waitingCompanyLinks', 'approvals'] })).toBe(isSuperuser)
     expect(can({ users: { action: 'create' }, settings: { action: 'create' } })).toBe(true)
     expect(can({ users: { action: 'create' }, companies: { action: 'create' } })).toBe(isSuperuser)
+    expect(can({ users: { action: ['show', 'xpto2'] }, companies: { action: 'xpto2' } })).toBe(true)
+    expect(can({ users: { action: ['xpto1', 'xpto2'] }, companies: { action: 'xpto2' } })).toBe(isSuperuser)
   })
 
   it(`canList -> isSuperUser: ${isSuperuser}`, () => {
@@ -92,10 +96,13 @@ describe.each(storeList)('Permissionamento -> isSuperuser: $isSuperuser', (store
     expect(canByPermission({ users: { action: 'edit', company: ['company-uuid03'] } })).toBe(true)
     expect(canByPermission({ users: { action: 'edit', company: 'company-uuid03' } })).toBe(true)
 
+    expect(canByPermission({ users: { action: ['edit', 'xpto'], company: 'company-uuid03' } })).toBe(true)
+    expect(canByPermission({ users: { action: ['edit', 'xpto'], company: 'company-uuid032' } })).toBe(isSuperuser)
+
     expect(canByPermission(
       {
         users: {
-          action: 'edit',
+          action: ['edit', 'xpto'],
           company: 'company-uuid03'
         },
         settings: {
