@@ -2,7 +2,7 @@
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em Keep a Changelog, e este projeto adere ao Semantic Versioning.
 
-## Não publicado
+## 1.0.0-beta.10 - 28-01-2024
 ### Adicionado
 `useAppCanWrapper`: adicionado opção `action` nos métodos `can` e `canByPermission` para receber `string` ou `string[]` (array de string), anteriormente só recebia string, agora pode passar uma lista de ações.
 
