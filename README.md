@@ -86,7 +86,9 @@ const {
 } = useAppCan({ store })
 
 can('users', { action: 'dashboard' })
+can('users', { action: ['dashboard', 'show'] })
 can({ users: { action: 'dashboard' } })
+can({ users: { action: ['dashboard', 'show'] } })
 
 canList('users')
 canList(['users', 'approvals'])
@@ -95,7 +97,9 @@ canCreate('users')
 canCreate(['users', 'approvals'])
 
 canByPermission('users', { company: 'company1', action: 'dashboard' })
+canByPermission('users', { company: 'company1', action: ['dashboard', 'list'] })
 canByPermission({ users: { company: ['company1', 'company2'], action: 'dashboard' } })
+canByPermission({ users: { company: ['company1', 'company2'], action: ['dashboard', 'list'] } })
 
 canEdit('users', { company: ['company1', 'company2'] })
 canEdit({ users: { company: 'company1' } })

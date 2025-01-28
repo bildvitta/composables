@@ -9,7 +9,8 @@ import {
 import {
   getNormalizedParams,
   getNormalizedParamsByPermission,
-  getNormalizedParamsPayload
+  getNormalizedParamsPayload,
+  hasPermission
 } from './use-app-can-wrapper.util'
 
 /**
@@ -28,7 +29,9 @@ import {
  * } = useAppCanWrapper({ store })
  *
  * can('users', { action: 'dashboard' })
+ * can('users', { action: ['dashboard', 'show'] })
  * can({ users: { action: 'dashboard' } })
+ * can({ users: { action: ['dashboard', 'show'] } })
  *
  * canList('users')
  * canList(['users', 'approvals'])
@@ -37,7 +40,9 @@ import {
  * canCreate(['users', 'approvals'])
  *
  * canByPermission('users', { company: 'company1', action: 'dashboard' })
+ * canByPermission('users', { company: 'company1', action: ['dashboard', 'list'] })
  * canByPermission({ users: { company: ['company1', 'company2'], action: 'dashboard' } })
+ * canByPermission({ users: { company: ['company1', 'company2'], action: ['dashboard', 'list'] } })
  *
  * canEdit('users', { company: ['company1', 'company2'] })
  * canEdit({ users: { company: 'company1' } })
@@ -72,13 +77,18 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
     for (const entity in normalizedParamsPayload) {
       const { action } = normalizedParamsPayload[entity]
 
+      /**
+       * @example action: ['list', 'show']
+       */
+      const normalizedAction = Array.isArray(action) ? action : [action]
+
       for (const companyKey in companyPermissions) {
         /**
          * @example permissionItem: ['companies.list', 'companies.show']
          */
         const permissionItem = companyPermissions[companyKey]
 
-        if (permissionItem.includes(`${entity}.${action}`)) return true
+        if (hasPermission(normalizedAction, entity, permissionItem)) return true
       }
     }
 
@@ -129,6 +139,11 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
       const normalizedCompany = Array.isArray(company) ? company : [company]
 
       /**
+       * @example action: ['list', 'show']
+       */
+      const normalizedAction = Array.isArray(action) ? action : [action]
+
+      /**
        * @example normalizedCompany: ['company1', 'company2']
        */
       for (const companyItem of normalizedCompany) {
@@ -146,7 +161,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
           ...(companyPermission || [])
         ]
 
-        if (permissionItem.includes(`${entity}.${action}`)) return true
+        if (hasPermission(normalizedAction, entity, permissionItem)) return true
       }
     }
 

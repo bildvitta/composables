@@ -2,7 +2,8 @@ import {
   type CanByPermissionObjectOfConfig,
   type GetNormalizedParamsByPermission,
   type CanObjectOfConfig,
-  type GetNormalizedParams
+  type GetNormalizedParams,
+  type HasPermission
 } from './use-app-can-wrapper.type'
 
 export const getNormalizedParams: GetNormalizedParams = (action, entity) => {
@@ -38,4 +39,24 @@ export const getNormalizedParamsByPermission: GetNormalizedParamsByPermission = 
   }
 
   return normalizedParamsPayload
+}
+
+/**
+ * Verifica se há permissão para uma determinada ação em uma entidade específica.
+ *
+ * @param action - Ações a serem verificadas.
+ * @param entity - Entidade na qual a ação será verificada.
+ * @param permissions - Lista de permissões disponíveis.
+ * @returns `true` se houver permissão para a ação na entidade, caso contrário `false`.
+ *
+ * @example
+ * ```typescript
+ * const permissions = ['user.create', 'user.delete', 'post.read'];
+ * const canCreateUser = hasPermission(['create'], 'user', permissions); // true
+ * const canUpdateUser = hasPermission(['update'], 'user', permissions); // false
+ * const canReadPost = hasPermission(['read'], 'post', permissions); // true
+ * ```
+ */
+export const hasPermission: HasPermission = (action, entity, permissions: string[]) => {
+  return action.some(actionItem => permissions.includes(`${entity}.${actionItem}`))
 }
