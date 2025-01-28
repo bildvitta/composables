@@ -4,9 +4,7 @@ O formato é baseado em Keep a Changelog, e este projeto adere ao Semantic Versi
 
 ## Não publicado
 ### Adicionado
-`useAppCanWrapper`:
-  - adicionado opção `action` nos métodos `can` e `canByPermission` para receber `string` ou `string[]` (array de string), anteriormente só recebia string, agora pode passar uma lista de ações.
-  - modificado testes unitários para aceitar mudanças no `action`.
+`useAppCanWrapper`: adicionado opção `action` nos métodos `can` e `canByPermission` para receber `string` ou `string[]` (array de string), anteriormente só recebia string, agora pode passar uma lista de ações.
 
 ## 1.0.0-beta.9 - 05-12-2024
 ### Adicionado
