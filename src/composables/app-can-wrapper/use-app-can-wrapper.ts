@@ -9,7 +9,8 @@ import {
 import {
   getNormalizedParams,
   getNormalizedParamsByPermission,
-  getNormalizedParamsPayload
+  getNormalizedParamsPayload,
+  hasPermission
 } from './use-app-can-wrapper.util'
 
 /**
@@ -87,11 +88,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
          */
         const permissionItem = companyPermissions[companyKey]
 
-        const hasInPermissionItem = normalizedAction.some(actionItem => {
-          return permissionItem.includes(`${entity}.${actionItem}`)
-        })
-
-        if (hasInPermissionItem) return true
+        if (hasPermission(normalizedAction, entity, permissionItem)) return true
       }
     }
 
@@ -164,11 +161,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
           ...(companyPermission || [])
         ]
 
-        const hasInPermissionItem = normalizedAction.some(actionItem => {
-          return permissionItem.includes(`${entity}.${actionItem}`)
-        })
-
-        if (hasInPermissionItem) return true
+        if (hasPermission(normalizedAction, entity, permissionItem)) return true
       }
     }
 

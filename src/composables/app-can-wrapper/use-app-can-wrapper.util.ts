@@ -2,7 +2,8 @@ import {
   type CanByPermissionObjectOfConfig,
   type GetNormalizedParamsByPermission,
   type CanObjectOfConfig,
-  type GetNormalizedParams
+  type GetNormalizedParams,
+  type HasPermission
 } from './use-app-can-wrapper.type'
 
 export const getNormalizedParams: GetNormalizedParams = (action, entity) => {
@@ -39,3 +40,7 @@ export const getNormalizedParamsByPermission: GetNormalizedParamsByPermission = 
 
   return normalizedParamsPayload
 }
+
+export const hasPermission: HasPermission = (action, entity, permissions: string[]) => action.some(actionItem => {
+  return permissions.includes(`${entity}.${actionItem}`)
+})

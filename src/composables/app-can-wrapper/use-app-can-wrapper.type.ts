@@ -51,3 +51,4 @@ export type GetNormalizedParamsByPermission = (
 
 export type GetNormalizedParams = (action: ActionType, entity: StringOrStringList) => CanObjectOfConfig
 export type CanWrapperFunction = (entity: StringOrStringList) => boolean
+export type HasPermission = (actions: string[], entity: string, permissions: string[]) => boolean
