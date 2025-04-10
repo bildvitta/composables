@@ -149,8 +149,6 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
       for (const companyItem of normalizedCompany) {
         const companyPermission = companyPermissions[companyItem]
 
-        if (!companyPermission) continue
-
         /**
          * mergeia as permissões da empresa mãe atual com as permissões da empresa atual
          *

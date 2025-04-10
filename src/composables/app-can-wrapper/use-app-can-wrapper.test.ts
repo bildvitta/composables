@@ -15,7 +15,7 @@ const storeList: AppCanWrapperStore[] = [
     isSuperuser: false,
     companyPermissions: {
       'company-uuid01': ['companies.list', 'companies.show'],
-      'company-uuid02': ['users.list', 'users.show', 'companies.delete', 'users.dashboard', 'settings.edit'],
+      'company-uuid02': ['users.list', 'users.show', 'companies.delete', 'users.dashboard', 'settings.edit', 'settings.delete'],
       'company-uuid03': ['companies.list', 'companies.show', 'companies.delete', 'users.edit'],
       'company-uuid04': ['settings.create', 'companies.show', 'companies.delete'],
       'company-uuid05': ['approvals.delete', 'companies.delete']
@@ -88,7 +88,7 @@ describe.each(storeList)('Permissionamento -> isSuperuser: $isSuperuser', (store
   })
 
   it(`canByPermission -> isSuperUser: ${isSuperuser}`, () => {
-    expect(canByPermission('users', { company: 'company1', action: 'dashboard' })).toBe(isSuperuser)
+    expect(canByPermission('users', { company: 'company1', action: 'dashboard' })).toBe(true)
     expect(canByPermission('users', { company: 'company-uuid01', action: 'edit' })).toBe(isSuperuser)
     expect(canByPermission('users', { company: 'company-uuid03', action: 'edit' })).toBe(true)
     expect(canByPermission('users', { company: 'company-uuid04', action: 'dashboard' })).toBe(true)
@@ -203,5 +203,25 @@ describe.each(storeList)('Permissionamento -> isSuperuser: $isSuperuser', (store
         company: 'company-uuid01'
       }
     })).toBe(true)
+  })
+
+  it(`canByPermission validar company somente pelo currentMainCompany -> isSuperUser: ${isSuperuser}`, () => {
+    expect(canByPermission('users', { company: 'company-random', action: 'dashboard' })).toBe(true)
+    expect(canByPermission('users', { company: 'company-random', action: 'create' })).toBe(isSuperuser)
+    expect(canByPermission('users', { company: 'company-random', action: ['create', 'dashboard'] })).toBe(true)
+    expect(canByPermission('companies', { company: 'company-random', action: 'xpto' })).toBe(isSuperuser)
+    expect(canByPermission('companies', { company: ['company-random', 'company-uuid01'], action: ['list'] })).toBe(true)
+
+    // show
+    expect(canShow('users', { company: 'company-random' })).toBe(true)
+    expect(canShow('companies', { company: 'company-random' })).toBe(isSuperuser)
+
+    // edit
+    expect(canEdit('companies', { company: 'company-random' })).toBe(isSuperuser)
+
+    // delete
+    expect(canDelete('settings', { company: 'company-random' })).toBe(true)
+    expect(canDelete('companies', { company: 'company-random' })).toBe(true)
+    expect(canDelete('users', { company: 'company-random' })).toBe(isSuperuser)
   })
 })
