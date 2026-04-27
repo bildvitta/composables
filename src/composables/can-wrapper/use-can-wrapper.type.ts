@@ -1,4 +1,4 @@
-import { type UserStore } from '../../types'
+import type { UserStore } from '../../types'
 
 export type Can = (permission: string, entity: string) => boolean
 export type CanAny = (permissions: string[], entity: string) => boolean

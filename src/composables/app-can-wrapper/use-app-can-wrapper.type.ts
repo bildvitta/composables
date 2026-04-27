@@ -1,4 +1,4 @@
-import { type UserStore } from '../../types'
+import type { UserStore } from '../../types'
 
 export type AppCanStoreOptions = 'isSuperuser' | 'companyPermissions' | 'currentMainCompany' | 'mainCompanyOptions'
 

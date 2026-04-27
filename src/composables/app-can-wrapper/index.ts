@@ -1,3 +1,3 @@
 export * from './use-app-can-wrapper'
-export * from './use-app-can-wrapper.type'
+export type * from './use-app-can-wrapper.type'
 export * from './use-app-can-wrapper.util'

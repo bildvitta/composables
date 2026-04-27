@@ -1,9 +1,9 @@
-import {
-  type AppCan,
-  type CanByPermission,
-  type CanByPermissionWrapperFunction,
-  type CanWrapperFunction,
-  type UseAppCanWrapperParam
+import type {
+  AppCan,
+  CanByPermission,
+  CanByPermissionWrapperFunction,
+  CanWrapperFunction,
+  UseAppCanWrapperParam
 } from './use-app-can-wrapper.type'
 
 import {

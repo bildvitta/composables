@@ -1,9 +1,9 @@
-import {
-  type CanByPermissionObjectOfConfig,
-  type GetNormalizedParamsByPermission,
-  type CanObjectOfConfig,
-  type GetNormalizedParams,
-  type HasPermission
+import type {
+  CanByPermissionObjectOfConfig,
+  GetNormalizedParamsByPermission,
+  CanObjectOfConfig,
+  GetNormalizedParams,
+  HasPermission
 } from './use-app-can-wrapper.type'
 
 export const getNormalizedParams: GetNormalizedParams = (action, entity) => {
@@ -25,7 +25,7 @@ export const getNormalizedParamsPayload = <T, U>(entityConfig: T, config?: U) =>
    * Se o primeiro parâmetro for uma string, sempre normaliza para um objeto
    */
   if (isStringEntityConfig && config) {
-    normalizedParamsPayload[entityConfig] = config as U
+    normalizedParamsPayload[entityConfig] = config
   }
 
   return (isStringEntityConfig ? normalizedParamsPayload : entityConfig) as Record<string, U>
@@ -57,6 +57,4 @@ export const getNormalizedParamsByPermission: GetNormalizedParamsByPermission = 
  * const canReadPost = hasPermission(['read'], 'post', permissions); // true
  * ```
  */
-export const hasPermission: HasPermission = (action, entity, permissions: string[]) => {
-  return action.some(actionItem => permissions.includes(`${entity}.${actionItem}`))
-}
+export const hasPermission: HasPermission = (action, entity, permissions: string[]) => action.some(actionItem => permissions.includes(`${entity}.${actionItem}`))

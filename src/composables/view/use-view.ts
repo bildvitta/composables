@@ -1,10 +1,27 @@
 import { ref } from 'vue'
-import type { ViewParams } from './use-view.type'
+import type { ViewParams, ViewState, ViewStateDefaults } from './use-view.type'
 
 enum ViewMode {
   List = 'list',
   Form = 'form',
   Single = 'single'
+}
+
+function isViewMode (value: string): value is ViewMode {
+  return Object.values(ViewMode).some(v => v === value)
+}
+
+function buildInitialState (mode: ViewMode, defaults: Partial<ViewStateDefaults>): ViewState {
+  const base: ViewState = {
+    errors: { ...defaults.errors },
+    fields: { ...defaults.fields },
+    metadata: { ...defaults.metadata },
+    fetching: false
+  }
+
+  if (mode === ViewMode.List) return { ...base, results: [] }
+  if (mode === ViewMode.Single) return { ...base, result: {} }
+  return { ...base, values: { ...defaults.values }, submitting: false }
 }
 
 /**
@@ -60,7 +77,7 @@ export function useView (config?: ViewParams) {
   /**
    * Reseta os valores do estado da view.
    */
-  const reset = (toDefaults: boolean = true) => {
+  const reset = (toDefaults = true) => {
     viewState.value.fetching = false
 
     viewState.value.errors = toDefaults ? { ...defaults?.errors } : {}
