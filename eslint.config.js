@@ -11,7 +11,9 @@ export default [
       ...eslintLove.rules,
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@typescript-eslint/strict-boolean-expressions': 'off',
-      '@typescript-eslint/explicit-function-return-type': 'off'
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/prefer-destructuring': ['error', { object: false, array: true }],
+      'complexity': 'off'
     }
   }
 ]

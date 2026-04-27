@@ -1,27 +1,10 @@
 import { ref } from 'vue'
-import type { ViewParams, ViewState, ViewStateDefaults } from './use-view.type'
+import type { ViewParams } from './use-view.type'
 
 enum ViewMode {
   List = 'list',
   Form = 'form',
   Single = 'single'
-}
-
-function isViewMode (value: string): value is ViewMode {
-  return Object.values(ViewMode).some(v => v === value)
-}
-
-function buildInitialState (mode: ViewMode, defaults: Partial<ViewStateDefaults>): ViewState {
-  const base: ViewState = {
-    errors: { ...defaults.errors },
-    fields: { ...defaults.fields },
-    metadata: { ...defaults.metadata },
-    fetching: false
-  }
-
-  if (mode === ViewMode.List) return { ...base, results: [] }
-  if (mode === ViewMode.Single) return { ...base, result: {} }
-  return { ...base, values: { ...defaults.values }, submitting: false }
 }
 
 /**
@@ -33,8 +16,8 @@ function buildInitialState (mode: ViewMode, defaults: Partial<ViewStateDefaults>
  * <app-list-view-component
  *  v-model:results="viewState.results"
  *  v-model:fields="viewState.fields"
- *  v-model:results="viewState.metadata"
- *  v-model:results="viewState.fetching"
+ *  v-model:metadata="viewState.metadata"
+ *  v-model:fetching="viewState.fetching"
  * />
  *
  * <script setup>
@@ -49,6 +32,7 @@ function buildInitialState (mode: ViewMode, defaults: Partial<ViewStateDefaults>
  * ```
  */
 export function useView (config?: ViewParams) {
+  console.log('to linkado useView')
   const mode = config?.mode ?? ViewMode.Form
 
   const defaults = {
@@ -58,20 +42,19 @@ export function useView (config?: ViewParams) {
     fields: config?.defaults?.fields
   }
 
-  const hasViewMode = Object.values(ViewMode).includes(mode as ViewMode)
-
-  if (!hasViewMode) throw new Error('Invalid view mode.')
+  if (!isViewMode(mode)) throw new Error('Invalid view mode.')
+  console.log('<-- viewState')
 
   const viewState = ref({
-    errors: { ...defaults?.errors },
-    fields: { ...defaults?.fields },
-    metadata: { ...defaults?.metadata },
+    errors: { ...defaults.errors },
+    fields: { ...defaults.fields },
+    metadata: { ...defaults.metadata },
 
     fetching: false,
 
     ...(mode === ViewMode.List && { results: [] }),
     ...(mode === ViewMode.Single && { result: {} }),
-    ...(mode === ViewMode.Form && { values: { ...defaults?.values }, submitting: false })
+    ...(mode === ViewMode.Form && { values: { ...defaults.values }, submitting: false })
   })
 
   /**
@@ -80,22 +63,26 @@ export function useView (config?: ViewParams) {
   const reset = (toDefaults = true) => {
     viewState.value.fetching = false
 
-    viewState.value.errors = toDefaults ? { ...defaults?.errors } : {}
-    viewState.value.fields = toDefaults ? { ...defaults?.fields } : {}
-    viewState.value.metadata = toDefaults ? { ...defaults?.metadata } : {}
+    viewState.value.errors = toDefaults ? { ...defaults.errors } : {}
+    viewState.value.fields = toDefaults ? { ...defaults.fields } : {}
+    viewState.value.metadata = toDefaults ? { ...defaults.metadata } : {}
 
     if (mode === ViewMode.Form) {
-      viewState.value.values = toDefaults ? { ...defaults?.values } : {}
+      viewState.value.values = toDefaults ? { ...defaults.values } : {}
       viewState.value.submitting = false
     }
 
-    if (mode === ViewMode.List) (viewState.value.results = [])
+    if (mode === ViewMode.List) viewState.value.results = []
 
-    if (mode === ViewMode.Single) (viewState.value.result = {})
+    if (mode === ViewMode.Single) viewState.value.result = {}
   }
 
   return {
     viewState,
     reset
   }
+}
+
+function isViewMode (value: string): value is ViewMode {
+  return Object.values(ViewMode).some(modeValue => (modeValue as string) === value)
 }

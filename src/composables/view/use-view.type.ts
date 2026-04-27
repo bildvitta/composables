@@ -19,5 +19,5 @@ export type ViewStateDefaults = Pick<ViewState, 'errors' | 'metadata' | 'values'
 
 export type ViewParams = {
   mode: ViewModeTypes
-  defaults: ViewStateDefaults
+  defaults?: ViewStateDefaults
 }
