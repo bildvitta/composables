@@ -32,7 +32,6 @@ enum ViewMode {
  * ```
  */
 export function useView (config?: ViewParams) {
-  console.log('to linkado useView')
   const mode = config?.mode ?? ViewMode.Form
 
   const defaults = {
@@ -43,7 +42,6 @@ export function useView (config?: ViewParams) {
   }
 
   if (!isViewMode(mode)) throw new Error('Invalid view mode.')
-  console.log('<-- viewState')
 
   const viewState = ref({
     errors: { ...defaults.errors },
