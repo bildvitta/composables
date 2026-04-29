@@ -1,9 +1,9 @@
-import {
-  type AppCan,
-  type CanByPermission,
-  type CanByPermissionWrapperFunction,
-  type CanWrapperFunction,
-  type UseAppCanWrapperParam
+import type {
+  AppCan,
+  CanByPermission,
+  CanByPermissionWrapperFunction,
+  CanWrapperFunction,
+  UseAppCanWrapperParam
 } from './use-app-can-wrapper.type'
 
 import {
@@ -75,6 +75,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
      * }
      */
     for (const entity in normalizedParamsPayload) {
+      if (!Object.hasOwn(normalizedParamsPayload, entity)) continue
       const { action } = normalizedParamsPayload[entity]
 
       /**
@@ -83,6 +84,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
       const normalizedAction = Array.isArray(action) ? action : [action]
 
       for (const companyKey in companyPermissions) {
+        if (!Object.hasOwn(companyPermissions, companyKey)) continue
         /**
          * @example permissionItem: ['companies.list', 'companies.show']
          */
@@ -123,7 +125,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
     const normalizedParamsPayload = getNormalizedParamsPayload(entityConfig, config)
 
     // recupera as permissões da empresa mãe atual
-    const mainCompanyPermissions = companyPermissions[currentMainCompany] || []
+    const mainCompanyPermissions = companyPermissions[currentMainCompany] ?? []
 
     /**
      * @example normalizedParamsPayload:
@@ -133,6 +135,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
      * }
      */
     for (const entity in normalizedParamsPayload) {
+      if (!Object.hasOwn(normalizedParamsPayload, entity)) continue
       const { company, action } = normalizedParamsPayload[entity]
 
       // se a empresa for uma string, normaliza para um array
@@ -147,7 +150,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
        * @example normalizedCompany: ['company1', 'company2']
        */
       for (const companyItem of normalizedCompany) {
-        const companyPermission = companyPermissions[companyItem]
+        const companyPermission = Object.hasOwn(companyPermissions, companyItem) ? companyPermissions[companyItem] : []
 
         /**
          * mergeia as permissões da empresa mãe atual com as permissões da empresa atual
@@ -156,7 +159,7 @@ export function useAppCanWrapper ({ store }: UseAppCanWrapperParam) {
          */
         const permissionItem = [
           ...mainCompanyPermissions,
-          ...(companyPermission || [])
+          ...companyPermission
         ]
 
         if (hasPermission(normalizedAction, entity, permissionItem)) return true

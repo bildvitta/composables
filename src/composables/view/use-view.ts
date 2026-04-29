@@ -16,8 +16,8 @@ enum ViewMode {
  * <app-list-view-component
  *  v-model:results="viewState.results"
  *  v-model:fields="viewState.fields"
- *  v-model:results="viewState.metadata"
- *  v-model:results="viewState.fetching"
+ *  v-model:metadata="viewState.metadata"
+ *  v-model:fetching="viewState.fetching"
  * />
  *
  * <script setup>
@@ -41,44 +41,46 @@ export function useView (config?: ViewParams) {
     fields: config?.defaults?.fields
   }
 
-  const hasViewMode = Object.values(ViewMode).includes(mode as ViewMode)
-
-  if (!hasViewMode) throw new Error('Invalid view mode.')
+  if (!isViewMode(mode)) throw new Error('Invalid view mode.')
 
   const viewState = ref({
-    errors: { ...defaults?.errors },
-    fields: { ...defaults?.fields },
-    metadata: { ...defaults?.metadata },
+    errors: { ...defaults.errors },
+    fields: { ...defaults.fields },
+    metadata: { ...defaults.metadata },
 
     fetching: false,
 
     ...(mode === ViewMode.List && { results: [] }),
     ...(mode === ViewMode.Single && { result: {} }),
-    ...(mode === ViewMode.Form && { values: { ...defaults?.values }, submitting: false })
+    ...(mode === ViewMode.Form && { values: { ...defaults.values }, submitting: false })
   })
 
   /**
    * Reseta os valores do estado da view.
    */
-  const reset = (toDefaults: boolean = true) => {
+  const reset = (toDefaults = true) => {
     viewState.value.fetching = false
 
-    viewState.value.errors = toDefaults ? { ...defaults?.errors } : {}
-    viewState.value.fields = toDefaults ? { ...defaults?.fields } : {}
-    viewState.value.metadata = toDefaults ? { ...defaults?.metadata } : {}
+    viewState.value.errors = toDefaults ? { ...defaults.errors } : {}
+    viewState.value.fields = toDefaults ? { ...defaults.fields } : {}
+    viewState.value.metadata = toDefaults ? { ...defaults.metadata } : {}
 
     if (mode === ViewMode.Form) {
-      viewState.value.values = toDefaults ? { ...defaults?.values } : {}
+      viewState.value.values = toDefaults ? { ...defaults.values } : {}
       viewState.value.submitting = false
     }
 
-    if (mode === ViewMode.List) (viewState.value.results = [])
+    if (mode === ViewMode.List) viewState.value.results = []
 
-    if (mode === ViewMode.Single) (viewState.value.result = {})
+    if (mode === ViewMode.Single) viewState.value.result = {}
   }
 
   return {
     viewState,
     reset
   }
+}
+
+function isViewMode (value: string): value is ViewMode {
+  return Object.values(ViewMode).some(modeValue => (modeValue as string) === value)
 }

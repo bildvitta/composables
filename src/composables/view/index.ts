@@ -1,2 +1,2 @@
 export * from './use-view'
-export * from './use-view.type'
+export type * from './use-view.type'

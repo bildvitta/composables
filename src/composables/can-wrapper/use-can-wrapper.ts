@@ -26,7 +26,7 @@ export function useCanWrapper ({ store }: UseCanWrapperParam) {
     try {
       if (isSuperuser) return true
 
-      if (Object.prototype.hasOwnProperty.call(userPermissions, permission)) {
+      if (Object.hasOwn(userPermissions, permission)) {
         return entity
           ? userPermissions[permission] === '*' || userPermissions[permission].includes(entity)
           : true

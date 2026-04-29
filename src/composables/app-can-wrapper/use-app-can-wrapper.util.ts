@@ -1,9 +1,8 @@
-import {
-  type CanByPermissionObjectOfConfig,
-  type GetNormalizedParamsByPermission,
-  type CanObjectOfConfig,
-  type GetNormalizedParams,
-  type HasPermission
+import type {
+  GetNormalizedParamsByPermission,
+  CanObjectOfConfig,
+  GetNormalizedParams,
+  HasPermission
 } from './use-app-can-wrapper.type'
 
 export const getNormalizedParams: GetNormalizedParams = (action, entity) => {
@@ -17,28 +16,29 @@ export const getNormalizedParams: GetNormalizedParams = (action, entity) => {
   return normalizedParamsPayload
 }
 
-export const getNormalizedParamsPayload = <T, U>(entityConfig: T, config?: U) => {
-  const normalizedParamsPayload: Record<string, U> = {}
-  const isStringEntityConfig = typeof entityConfig === 'string'
+export const getNormalizedParamsPayload = <U>(entityConfig: string | Record<string, U>, config?: U): Record<string, U> => {
+  if (typeof entityConfig === 'string') {
 
-  /**
-   * Se o primeiro parâmetro for uma string, sempre normaliza para um objeto
-   */
-  if (isStringEntityConfig && config) {
-    normalizedParamsPayload[entityConfig] = config as U
+    if (config === undefined) return {}
+
+    return { [entityConfig]: config }
   }
 
-  return (isStringEntityConfig ? normalizedParamsPayload : entityConfig) as Record<string, U>
+  return entityConfig
 }
 
 export const getNormalizedParamsByPermission: GetNormalizedParamsByPermission = (action, entityConfig, config?) => {
-  const normalizedParamsPayload = getNormalizedParamsPayload(entityConfig, config) as CanByPermissionObjectOfConfig
+  const basePayload = getNormalizedParamsPayload(entityConfig, config)
 
-  for (const entity in normalizedParamsPayload) {
-    normalizedParamsPayload[entity].action = action
+  const result: ReturnType<GetNormalizedParamsByPermission> = {}
+
+  for (const entity in basePayload) {
+    if (!Object.hasOwn(basePayload, entity)) continue
+
+    result[entity] = { ...basePayload[entity], action }
   }
 
-  return normalizedParamsPayload
+  return result
 }
 
 /**
@@ -57,6 +57,4 @@ export const getNormalizedParamsByPermission: GetNormalizedParamsByPermission = 
  * const canReadPost = hasPermission(['read'], 'post', permissions); // true
  * ```
  */
-export const hasPermission: HasPermission = (action, entity, permissions: string[]) => {
-  return action.some(actionItem => permissions.includes(`${entity}.${actionItem}`))
-}
+export const hasPermission: HasPermission = (action, entity, permissions: string[]) => action.some(actionItem => permissions.includes(`${entity}.${actionItem}`))

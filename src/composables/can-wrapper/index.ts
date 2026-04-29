@@ -1,2 +1,2 @@
 export * from './use-can-wrapper'
-export * from './use-can-wrapper.type'
+export type * from './use-can-wrapper.type'

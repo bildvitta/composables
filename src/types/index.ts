@@ -1,1 +1,1 @@
-export * from './users.type'
+export type * from './users.type'

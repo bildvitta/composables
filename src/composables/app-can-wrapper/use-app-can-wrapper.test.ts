@@ -1,5 +1,5 @@
 import { useAppCanWrapper } from './use-app-can-wrapper'
-import { type AppCanWrapperStore } from './use-app-can-wrapper.type'
+import type { AppCanWrapperStore } from './use-app-can-wrapper.type'
 
 import { describe, it, expect } from 'vitest'
 
