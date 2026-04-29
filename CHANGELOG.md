@@ -2,6 +2,10 @@
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em Keep a Changelog, e este projeto adere ao Semantic Versioning.
 
+## [Unreleased]
+### Modificado
+- Depêndencias atualizadas, consequentemente foi necessário alterações nas funções, imports.
+
 ## 1.0.0-beta.12 - 10-04-2024
 ### Corrigido
 - publicado versão do dist (1.0.0-beta.11)
